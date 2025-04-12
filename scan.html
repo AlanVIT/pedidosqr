@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Escanear Pedido</title>
+    <link rel="stylesheet" href="scanner.css">
+    <script src="./node_modules/html5-qrcode/html5-qrcode.min.js"></script>
+    <script src="https://apis.google.com/js/api.js" id="gapi" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" id="gis" async defer></script>
+    <script src="auth.js" defer></script>
+    <script src="scan.js" defer></script>
+    
+</head>
+<body>
+    <h2>Escáner de QR</h2>
+    <div id="reader" style="width: 300px;"></div>
+    <div id="resultado"></div>
+
+    <script>
+    //     window.onload = function () {
+    // // Espera a que todo cargue, y luego inicia sesión automáticamente
+    // if (gapi && gapi.load) {
+    //     gapi.load('client', async () => {
+    //         await gapi.client.init({
+    //             apiKey: 'AIzaSyDR9mpx1LBUct9vsEDrGJZNjPsQ96_T9hY',
+    //             discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+    //         });
+
+    //         google.accounts.oauth2.initTokenClient({
+    //             client_id: '158471919435-9pbmlkeul2shmurosiemhjtne8qg8jeu.apps.googleusercontent.com',
+    //             scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
+    //             callback: (response) => {
+    //                 if (response.error) {
+    //                     console.error('Error en la autenticación:', response.error);
+    //                 } else {
+    //                     console.log("Autenticado");
+    //                 }
+    //             },
+    //         }).requestAccessToken({ prompt: 'consent' });
+    //     });
+    // }
+// };
+
+    </script>
+</body>
+</html>

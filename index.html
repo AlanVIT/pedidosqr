@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR para Retiro de Pedido</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Formulario de Pedido</h2>
+        <form id="pedidoForm">
+            <label for="idPedido">ID del Pedido:</label>
+            <input type="text" id="idPedido" placeholder="ID del Pedido" required>
+
+            <label for="cliente">Cliente:</label>
+            <input type="text" id="cliente" placeholder="Nombre del cliente" required>
+
+            <label for="productos">Productos (separados por coma):</label>
+            <input type="text" id="productos" placeholder="Lista de productos" required>
+
+            <label for="total">Total:</label>
+            <input type="number" id="total" placeholder="Total en $" required>
+
+            <button type="submit">Generar Pedido y QR</button>
+        </form>
+
+        <div id="qrContainer">
+            <h3>QR generado:</h3>
+            <div id="qrCode"></div>
+        </div>
+
+        <!-- <h2>Escanear QR del Pedido</h2>
+        <div id="reader" style="width:300px;"></div>
+        <p id="resultado"></p> -->
+    </div>
+
+
+<!-- <p>Sheets API Quickstart</p> -->
+
+    <!--Add buttons to initiate auth sequence and sign out-->
+    <!-- <button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
+    <button id="signout_button" onclick="handleSignoutClick()">Sign Out</button> -->
+
+    <pre id="content" style="white-space: pre-wrap;"></pre>
+    
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+    <script src="auth.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
