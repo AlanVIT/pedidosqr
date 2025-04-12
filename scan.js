@@ -45,36 +45,29 @@ function onScanError(err) {
 
 // ✅ Autenticación o restauración automática con localStorage
 window.addEventListener('load', () => {
-    const tokenGuardado = localStorage.getItem('token');
-    const autenticado = localStorage.getItem('autenticado') === 'true';
-
-    if (tokenGuardado && autenticado) {
-        gapi.load('client', () => {
-            gapi.client.init({
-                apiKey: API_KEY,
-                discoveryDocs: [DISCOVERY_DOC],
-            }).then(() => {
-                gapi.client.setToken(JSON.parse(tokenGuardado));
-                console.log("✅ Token restaurado desde localStorage");
-                iniciarScanner();
-            }).catch(err => {
-                console.error("❌ Error al inicializar gapi.client:", err);
-            });
-        });
-    } else {
-        console.log("🔐 No hay token, pidiendo autenticación...");
-        handleAuthClick(() => {
-            console.log("🔓 Autenticado en scan.js");
+    // Esperar a que gapi esté inicializado antes de cualquier cosa
+    const interval = setInterval(() => {
+        if (gapiInited) {
+            clearInterval(interval);
 
             const token = gapi.client.getToken();
             if (token) {
-                localStorage.setItem('token', JSON.stringify(token));
-                localStorage.setItem('autenticado', 'true');
-            }
+                console.log("✅ Token ya activo en scan.js");
+                iniciarScanner();
+            } else {
+                console.log("🔐 Token no encontrado, pidiendo autenticación...");
 
-            iniciarScanner();
-        });
-    }
+                handleAuthClick(() => {
+                    const nuevoToken = gapi.client.getToken();
+                    if (nuevoToken) {
+                        localStorage.setItem('token', JSON.stringify(nuevoToken));
+                        localStorage.setItem('autenticado', 'true');
+                        iniciarScanner();
+                    }
+                });
+            }
+        }
+    }, 100); // chequear cada 100ms hasta que gapi esté listo
 });
 
 

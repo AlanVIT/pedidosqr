@@ -44,37 +44,40 @@ function handleAuthClick(callback) {
     if (typeof callback !== 'function') {
         callback = () => console.warn('No se proporcionó un callback válido');
     }
+
     tokenClient.callback = async (resp) => {
         if (resp.error !== undefined) {
-            console.error("Error en la autenticación:", resp);
+            console.error("❌ Error en la autenticación:", resp);
             return;
         }
-    
+
         const token = gapi.client.getToken();
         if (token) {
+            gapi.client.setToken(token); // 🔐 Muy importante
             localStorage.setItem('token', JSON.stringify(token));
             localStorage.setItem('autenticado', 'true');
+            console.log("✅ Token recibido y guardado");
         }
-    
+
         callback();
     };
-    
-    const token = gapi.client.getToken();
-    const yaAutenticado = localStorage.getItem('autenticado') === 'true';
 
-    if (!token && !yaAutenticado) {
-        console.log("Solicitando acceso con consentimiento");
-        tokenClient.requestAccessToken({ prompt: 'consent' });
-    } else if (!token && yaAutenticado) {
-        console.log("Recuperando token sin consentimiento");
-        tokenClient.requestAccessToken({ prompt: '' });
+    const tokenGuardado = localStorage.getItem('token');
+    const autenticado = localStorage.getItem('autenticado') === 'true';
+
+    if (tokenGuardado && autenticado) {
+        // Restaurar token sin pedir consentimiento
+        const token = JSON.parse(tokenGuardado);
+        gapi.client.setToken(token);
+        console.log("♻️ Token restaurado desde localStorage");
+
+        callback(); // Ya está todo listo
     } else {
-        console.log("Ya hay token activo");
-        callback();
+        // Primera vez → pedir consentimiento
+        console.log("🔐 No hay token guardado, pidiendo consentimiento");
+        tokenClient.requestAccessToken({ prompt: 'consent' });
     }
-
 }
-
 // Cerrar sesión
 function handleSignoutClick() {
     const token = gapi.client.getToken();
@@ -116,32 +119,27 @@ window.addEventListener('load', () => {
     const tokenGuardado = localStorage.getItem('token');
     const autenticado = localStorage.getItem('autenticado') === 'true';
 
-    if (tokenGuardado && autenticado) {
-        gapi.load('client', async () => {
-            try {
-                await gapi.client.init({
-                    apiKey: API_KEY,
-                    discoveryDocs: [DISCOVERY_DOC],
-                });
+    gapi.load('client', async () => {
+        try {
+            await gapi.client.init({
+                apiKey: API_KEY,
+                discoveryDocs: [DISCOVERY_DOC],
+            });
 
+            gapiInited = true;
+
+            if (tokenGuardado && autenticado) {
                 gapi.client.setToken(JSON.parse(tokenGuardado));
-                console.log("✅ Token restaurado correctamente en auth.js");
-
-                // if (typeof iniciarScanner === 'function') {
-                //     iniciarScanner();
-                // }
-            } catch (err) {
-                console.error("❌ Error al inicializar gapi.client:", err);
+                console.log("✅ Token restaurado correctamente (auth.js)");
+            } else {
+                console.log("🔐 No hay token. Se requerirá autenticación más adelante.");
             }
-        });
-    } else {
-        console.warn("⚠️ No hay token guardado, se pedirá autenticación");
-        if (typeof iniciarScanner === 'function') {
-            iniciarScanner();
-        }
-    }
-});
 
+        } catch (err) {
+            console.error("❌ Error al inicializar gapi.client:", err);
+        }
+    });
+});
 
 
 
