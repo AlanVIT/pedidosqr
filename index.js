@@ -71,7 +71,6 @@ document.getElementById("pedidoForm").addEventListener("submit", async function 
         if (yaExiste) {
             alert("⚠️ Ya existe un pedido con ese ID, este es su qr.");
             generarQRCode(pedido.id);
-
             return;
         }
         
