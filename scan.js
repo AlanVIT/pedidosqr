@@ -1,5 +1,17 @@
 let scanner;
 
+let gapiReady = new Promise((resolve) => {
+    window.addEventListener('load', () => {
+        gapi.load('client', async () => {
+            await gapi.client.init({
+                apiKey: API_KEY,
+                discoveryDocs: [DISCOVERY_DOC],
+            });
+            console.log("✅ GAPI inicializado en scan.js");
+            resolve();
+        });
+    });
+});
 
 function iniciarScanner() {
     console.log("🎥 Iniciando scanner...");
@@ -209,10 +221,7 @@ async function marcarComoCompletado(idPedido) {
 
 // Busca el pedido en Google Sheets por ID
 async function buscarPedidoEnSheets(idPedido) {
-    if (!gapi.client.sheets) {
-        console.error("❌ Google Sheets API no está lista todavía.");
-        return null;
-    }
+    await gapiReady;
 
     try {
         const response = await gapi.client.sheets.spreadsheets.values.get({
