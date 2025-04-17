@@ -40,26 +40,27 @@ function guardarPedidoEnSheets(pedido) {
 // Función para generar el código QR utilizando la librería QRCode.js
 function generarQRCode(contenido) {
     const qrCodeContainer = document.getElementById("qrCode");
-    qrCodeContainer.innerHTML = "";  // Limpiar el contenedor antes de generar un nuevo QR
+    qrCodeContainer.innerHTML = "";
+
+    const urlCompleta = `https://pedidosqr.netlify.app/scan?id=${encodeURIComponent(contenido)}`;
 
     const qr = new QRCode(qrCodeContainer, {
-        text: contenido,  // Contenido del QR
-        width: 200,  
+        text: urlCompleta,
+        width: 200,
         height: 200
     });
 
-    // Esperamos un pequeño tiempo para que el QR se genere
     setTimeout(() => {
         const img = qrCodeContainer.querySelector('img');
         if (img) {
-            // Crear un link de descarga
             const link = document.createElement('a');
             link.href = img.src;
-            link.download = `pedido_${contenido}.jpg`;  // Nombre del archivo
+            link.download = `pedido_${contenido}.png`;
             link.click();
         }
-    }, 500); // Esperar 500ms para asegurarse que se renderice
+    }, 500);
 }
+
 
 // Evitar que el formulario haga refresh y enviar datos a Google Sheets
 document.getElementById("pedidoForm").addEventListener("submit", async function (event) {
