@@ -55,7 +55,7 @@ function generarQRCode(contenido) {
         if (img) {
             const link = document.createElement('a');
             link.href = img.src;
-            link.download = `pedido_${contenido}.png`;
+            link.download = `pedido_${contenido}.jpg`;
             link.click();
         }
     }, 500);

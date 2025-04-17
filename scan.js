@@ -62,7 +62,6 @@ window.addEventListener('load', () => {
                     if (nuevoToken) {
                         localStorage.setItem('token', JSON.stringify(nuevoToken));
                         localStorage.setItem('autenticado', 'true');
-                        iniciarScanner();
                     }
                 });
             }
