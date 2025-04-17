@@ -53,7 +53,6 @@ window.addEventListener('load', () => {
             const token = gapi.client.getToken();
             if (token) {
                 console.log("✅ Token ya activo en scan.js");
-                iniciarScanner();
             } else {
                 console.log("🔐 Token no encontrado, pidiendo autenticación...");
 
@@ -209,18 +208,25 @@ async function marcarComoCompletado(idPedido) {
 
 
 // Busca el pedido en Google Sheets por ID
-function buscarPedidoEnSheets(idPedido) {
-    return gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: '14PiA80nAr4a9EkFLq8dz3yp1XMZJBWHVDABc1ylMi1Q',
-        range: 'Pedidos!A2:D1000'
-    }).then(response => {
+async function buscarPedidoEnSheets(idPedido) {
+    if (!gapi.client.sheets) {
+        console.error("❌ Google Sheets API no está lista todavía.");
+        return null;
+    }
+
+    try {
+        const response = await gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: '14PiA80nAr4a9EkFLq8dz3yp1XMZJBWHVDABc1ylMi1Q',
+            range: 'Pedidos!A2:D1000'
+        });
+
         const filas = response.result.values;
         const fila = filas.find(f => f[0] === idPedido);
         return fila || null;
-    }).catch(error => {
+    } catch (error) {
         console.error("Error buscando en Sheets:", error);
         return null;
-    });
+    }
 }
 
 async function editarCampo(content, fila, columna){
