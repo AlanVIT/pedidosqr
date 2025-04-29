@@ -142,4 +142,29 @@ window.addEventListener('load', () => {
 });
 
 
-
+function iniciarSesion() {
+    handleAuthClick(() => {
+      document.getElementById("authPrompt").style.display = "none";
+      iniciarScanner(); // o continuar flujo
+    });
+  }
+  
+  // Esperar que se cargue la API de Google
+  window.addEventListener('load', () => {
+    const tokenGuardado = localStorage.getItem('token');
+    const autenticado = localStorage.getItem('autenticado') === 'true';
+  
+    if (tokenGuardado && autenticado) {
+      gapi.load('client', () => {
+        gapi.client.init({
+          apiKey: API_KEY,
+          discoveryDocs: [DISCOVERY_DOC],
+        }).then(() => {
+          gapi.client.setToken(JSON.parse(tokenGuardado));
+        }).catch(console.error);
+      });
+    } else {
+      // Mostrar botón de inicio de sesión
+      document.getElementById("authPrompt").style.display = "block";
+    }
+  });  
