@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estado del Pedido</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    <script src="https://apis.google.com/js/api.js" async defer></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
     <script src="auth.js" defer></script> <!-- Tu auth.js de siempre -->
     <script src="scan.js" defer></script> <!-- Ahora scan.js ya maneja los 2 casos -->
     <link rel="stylesheet" href="scanner.css"> <!-- Si querés agregar estilos -->
@@ -20,5 +20,10 @@
 
     <div id="reader" style="width: 300px; margin-top: 20px;"></div>
     <div id="resultado"></div>
+    <div id="authPrompt" style="display: none; text-align: center; padding: 2rem;">
+        <p>Para continuar, iniciá sesión con Google:</p>
+        <button onclick="iniciarSesion()">Iniciar sesión</button>
+    </div>
+
 </body>
 </html>

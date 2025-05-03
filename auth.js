@@ -56,6 +56,7 @@ function handleAuthClick(callback) {
             gapi.client.setToken(token); // 🔐 Muy importante
             localStorage.setItem('token', JSON.stringify(token));
             localStorage.setItem('autenticado', 'true');
+            localStorage.setItem('tokenTimestamp', Date.now());  // 🕒 Guardamos hora del token            
             console.log("✅ Token recibido y guardado");
         }
 
@@ -78,6 +79,10 @@ function handleAuthClick(callback) {
         tokenClient.requestAccessToken({ prompt: 'consent' });
     }
 }
+
+
+
+
 // Cerrar sesión
 function handleSignoutClick() {
     const token = gapi.client.getToken();
@@ -118,6 +123,16 @@ async function listMajors() {
 window.addEventListener('load', () => {
     const tokenGuardado = localStorage.getItem('token');
     const autenticado = localStorage.getItem('autenticado') === 'true';
+    const tokenTimestamp = localStorage.getItem('tokenTimestamp');
+    const ahora = Date.now();
+
+    // ⏰ Verificamos expiración del token
+    if (tokenTimestamp && ahora - parseInt(tokenTimestamp) > 60 * 60 * 1000) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('autenticado');
+        localStorage.removeItem('tokenTimestamp');
+        console.log("🧹 Token expirado y eliminado del localStorage");
+    }
 
     gapi.load('client', async () => {
         try {
@@ -132,7 +147,8 @@ window.addEventListener('load', () => {
                 gapi.client.setToken(JSON.parse(tokenGuardado));
                 console.log("✅ Token restaurado correctamente (auth.js)");
             } else {
-                console.log("🔐 No hay token. Se requerirá autenticación más adelante.");
+                document.getElementById("authPrompt").style.display = "block";
+                console.log("🔐 No hay token. Se mostrará botón de autenticación.");
             }
 
         } catch (err) {
@@ -142,29 +158,11 @@ window.addEventListener('load', () => {
 });
 
 
+
 function iniciarSesion() {
     handleAuthClick(() => {
       document.getElementById("authPrompt").style.display = "none";
-      iniciarScanner(); // o continuar flujo
     });
   }
   
-  // Esperar que se cargue la API de Google
-  window.addEventListener('load', () => {
-    const tokenGuardado = localStorage.getItem('token');
-    const autenticado = localStorage.getItem('autenticado') === 'true';
-  
-    if (tokenGuardado && autenticado) {
-      gapi.load('client', () => {
-        gapi.client.init({
-          apiKey: API_KEY,
-          discoveryDocs: [DISCOVERY_DOC],
-        }).then(() => {
-          gapi.client.setToken(JSON.parse(tokenGuardado));
-        }).catch(console.error);
-      });
-    } else {
-      // Mostrar botón de inicio de sesión
-      document.getElementById("authPrompt").style.display = "block";
-    }
-  });  
+
